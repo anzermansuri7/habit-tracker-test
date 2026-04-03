@@ -1,15 +1,21 @@
-interface Props {
-  label: string;
+import type { ReactNode } from 'react';
+
+interface StatCardProps {
+  title: string;
   value: string;
-  subtitle?: string;
+  hint?: string;
+  icon?: ReactNode;
 }
 
-export function StatCard({ label, value, subtitle }: Props) {
+export function StatCard({ title, value, hint, icon }: StatCardProps) {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-brand-50 to-white p-4 ring-1 ring-brand-100">
-      <p className="text-sm text-stone-600">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-stone-800">{value}</p>
-      {subtitle ? <p className="mt-1 text-xs text-stone-500">{subtitle}</p> : null}
-    </div>
+    <article className="card">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm text-slate-500">{title}</p>
+        {icon}
+      </div>
+      <p className="text-2xl font-bold text-slate-800">{value}</p>
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+    </article>
   );
 }

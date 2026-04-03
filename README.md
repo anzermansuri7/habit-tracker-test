@@ -1,47 +1,68 @@
 # Life Planning Tool
 
-A full-stack personal dashboard for habits, health, finance, pregnancy, and learning.
+A full-stack personal life management dashboard built with **React + Vite + Tailwind + Supabase**.
 
-## What changed in this version
+## Features
 
-- Added **user hierarchy**: `admin` and `regular`.
-- Added **first-login onboarding** collecting: name, phone, age, gender, weight, height, and selected services.
-- Added **module opt-in routing** so users only see selected services.
-- Added **Supabase-backed CRUD** in every module (no longer static/in-memory).
-- Added **default habit seeding** button to quickly insert initial data.
-- Added `supabase/seed.sql` for initial sample data.
-- Updated schema policies to support admin visibility.
+- Authentication (email/password via Supabase)
+- Unified dashboard with cards + chart
+- Habit tracker with learning/namaz/workout/diet logging
+- Diet & fitness tracker (meals, workouts, weight logs)
+- Finance tracker (expenses, debt, EMI)
+- Pregnancy tracker (weekly logs, medication/reminders)
+- Learning & career tracker (skills + learning hours)
+- Realtime-ready Supabase schema + RLS
 
-## Run the app
+## Tech Stack
+
+- Frontend: React, TypeScript, Tailwind CSS, Recharts
+- Backend: Supabase (PostgreSQL, Auth, Realtime)
+
+## Project Structure
+
+```txt
+.
+├── src/
+│   ├── components/
+│   ├── hooks/
+│   ├── layouts/
+│   ├── lib/
+│   ├── pages/
+│   ├── styles/
+│   └── types/
+├── supabase/
+│   ├── schema.sql
+│   └── seed.sql
+├── .env.example
+└── README.md
+```
+
+## Setup
 
 1. Install dependencies:
    ```bash
    npm install
    ```
-2. Create env file:
+2. Configure environment:
    ```bash
    cp .env.example .env
    ```
-3. Fill `.env` with your Supabase values.
-4. In Supabase SQL editor, run:
-   - `supabase/schema.sql`
-   - then optionally `supabase/seed.sql` (replace `USER_ID_HERE`)
-5. Start app:
+   Fill:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+3. Create Supabase schema:
+   - Open Supabase SQL editor.
+   - Run `supabase/schema.sql`.
+   - (Optional) run `supabase/seed.sql` after replacing `<USER_ID>`.
+
+4. Start app:
    ```bash
    npm run dev
    ```
 
-## Fix for `Could not find table 'public.habit_logs' in schema cache`
+## Notes
 
-This is usually because schema migrations were not applied yet (or cache not refreshed). Do this in order:
-
-1. Execute `supabase/schema.sql` in SQL editor.
-2. Open **Project Settings → API** and click **Reload schema cache**.
-3. Restart frontend dev server.
-
-## Required environment variables
-
-```bash
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
+- All module tables are protected with RLS.
+- The app is designed with reusable card/table components and route-based modules.
+- You can extend to PWA + notifications with service worker and scheduled Supabase edge functions.

@@ -1,51 +1,49 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Activity, BookOpen, CircleDollarSign, HeartPulse, LayoutDashboard, ShieldCheck, Sparkles } from 'lucide-react';
-import { UserProfile } from '../types';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { BarChart3, BookOpen, Dumbbell, HeartPulse, LayoutDashboard, PiggyBank, LogOut } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
-interface Props {
-  profile: UserProfile;
-}
+const nav = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/habits', label: 'Habit Tracker', icon: BarChart3 },
+  { to: '/fitness', label: 'Diet & Fitness', icon: Dumbbell },
+  { to: '/finance', label: 'Finance', icon: PiggyBank },
+  { to: '/pregnancy', label: 'Pregnancy', icon: HeartPulse },
+  { to: '/learning', label: 'Learning & Career', icon: BookOpen },
+];
 
-const navConfig = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, service: null },
-  { to: '/habits', label: 'Habits', icon: Sparkles, service: 'Habit Tracker' },
-  { to: '/diet-fitness', label: 'Diet & Fitness', icon: Activity, service: 'Diet and Fitness Tracker' },
-  { to: '/finance', label: 'Finance', icon: CircleDollarSign, service: 'Finance' },
-  { to: '/pregnancy', label: 'Pregnancy', icon: HeartPulse, service: 'Pregnancy' },
-  { to: '/learning', label: 'Learning', icon: BookOpen, service: 'Learning & Career' },
-  { to: '/admin', label: 'Admin', icon: ShieldCheck, service: null, adminOnly: true },
-] as const;
-
-export function AppLayout({ profile }: Props) {
-  const allowed = navConfig.filter((item) => {
-    if ('adminOnly' in item && item.adminOnly && profile.role !== 'admin') return false;
-    if (!item.service) return true;
-    return profile.selected_modules.includes(item.service);
-  });
+export function AppLayout() {
+  const { pathname } = useLocation();
+  const { signOut, session } = useAuth();
 
   return (
-    <div className="min-h-screen md:grid md:grid-cols-[260px_1fr]">
-      <aside className="border-r border-stone-200 bg-white p-5">
-        <h1 className="mb-3 text-xl font-bold text-brand-700">Life Planning Tool</h1>
-        <p className="mb-6 text-xs text-stone-500">{profile.full_name} · {profile.role.toUpperCase()}</p>
-        <nav className="space-y-2">
-          {allowed.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition ${
-                  isActive ? 'bg-brand-100 text-brand-700' : 'text-stone-600 hover:bg-stone-100'
-                }`
-              }
-            >
-              <Icon size={16} />
-              {label}
-            </NavLink>
-          ))}
+    <div className="min-h-screen bg-brand-50 lg:grid lg:grid-cols-[260px_1fr]">
+      <aside className="border-r border-brand-100 bg-white p-5">
+        <h1 className="mb-6 text-xl font-bold text-brand-800">Life Planning Tool</h1>
+        <nav className="space-y-1">
+          {nav.map((item) => {
+            const active = pathname === item.to;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${
+                  active ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-brand-100'
+                }`}
+              >
+                <Icon size={16} />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
+        <div className="mt-6 rounded-xl bg-brand-50 p-3 text-xs text-slate-600">{session?.user.email}</div>
+        <button className="btn-secondary mt-3 w-full" onClick={() => signOut()}>
+          <LogOut size={14} className="mr-1" />
+          Logout
+        </button>
       </aside>
-      <main className="p-4 md:p-8">
+      <main className="p-4 lg:p-7">
         <Outlet />
       </main>
     </div>
